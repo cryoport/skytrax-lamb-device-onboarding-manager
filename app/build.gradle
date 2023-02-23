@@ -79,10 +79,10 @@ jacocoTestReport {
 
 sonarqube {
     properties {
-        property 'sonar.projectName', 'skytrax-lamb-user-manager'
+        property 'sonar.projectName', 'skytrax-lamb-device-onboarding-manager'
         property 'sonar.host.url', 'https://sonarcloud.io'
         property 'sonar.organization', 'cryoport'
-        property 'sonar.projectKey', 'cryoport_skytrax-lamb-user-manager'
+        property 'sonar.projectKey', 'cryoport_skytrax-lamb-device-onboarding-manager'
         property "sonar.java.coveragePlugin", "jacoco"
         property "sonar.jacoco.reportPaths", "build/reports/jacoco/test/jacocoTestReport.xml"
     }

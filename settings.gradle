@@ -1,5 +1,5 @@
 
-rootProject.name="skytrax-lamb-device-onboarding-manager"
+rootProject.name="skytrax-device-onboarding-manager"
 
 include("app")
 include("infra")
