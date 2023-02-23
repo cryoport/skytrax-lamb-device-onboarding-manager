@@ -1,4 +1,5 @@
 package com.cryoport.skytrax;
+import io.micronaut.context.ApplicationContext;
 import io.micronaut.function.aws.MicronautRequestHandler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,6 +10,13 @@ import java.util.Collections;
 public class FunctionRequestHandler extends MicronautRequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
     @Inject
     ObjectMapper objectMapper;
+
+    public FunctionRequestHandler() {
+    }
+
+    public FunctionRequestHandler(ApplicationContext applicationContext) {
+        super(applicationContext);
+    }
 
     @Override
     public APIGatewayProxyResponseEvent execute(APIGatewayProxyRequestEvent input) {

@@ -37,10 +37,9 @@ dependencies {
     testImplementation("org.testcontainers:mongodb")
     testImplementation("org.testcontainers:testcontainers")
     implementation("io.micronaut:micronaut-validation")
-
     implementation("io.micronaut.aws:micronaut-function-aws")
-
     implementation("io.micronaut.aws:micronaut-function-aws-custom-runtime")
+    compileOnly("com.google.code.findbugs:jsr305")
 
 }
 
