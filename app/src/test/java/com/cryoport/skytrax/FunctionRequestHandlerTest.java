@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 @MicronautTest
-public class FunctionRequestHandlerTest extends BaseMongoDataTest{
+class FunctionRequestHandlerTest extends BaseMongoDataTest{
 
     private static FunctionRequestHandler handler;
 
