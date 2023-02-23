@@ -1,7 +1,9 @@
 plugins {
+    id("jacoco")
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("io.micronaut.application") version "3.7.2"
     id("io.micronaut.test-resources") version "3.7.2"
+    id("org.sonarqube") version "3.4.0.2513"
 }
 
 version = "0.1"
@@ -9,6 +11,13 @@ group = "com.cryoport.skytrax"
 
 repositories {
     mavenCentral()
+    maven {
+        url "s3://skytrax-artifacts-repository"
+        credentials(AwsCredentials) {
+            accessKey SKYTRAX_MAVEN_USER
+            secretKey SKYTRAX_MAVEN_PASSWORD
+        }
+    }
 }
 
 dependencies {
@@ -44,6 +53,7 @@ java {
     targetCompatibility = JavaVersion.toVersion("17")
 }
 
+graalvmNative.toolchainDetection = false
 micronaut {
     runtime("lambda_java")
     testRuntime("junit5")
@@ -51,6 +61,41 @@ micronaut {
         incremental(true)
         annotations("com.cryoport.skytrax.*")
     }
+}
+
+tasks.named("dockerfileNative") {
+    args(
+            "-XX:MaximumHeapSizePercent=80",
+            "-Dio.netty.allocator.numDirectArenas=0",
+            "-Dio.netty.noPreferDirect=true"
+    )
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+    }
+}
+
+sonarqube {
+    properties {
+        property 'sonar.projectName', 'skytrax-lamb-user-manager'
+        property 'sonar.host.url', 'https://sonarcloud.io'
+        property 'sonar.organization', 'cryoport'
+        property 'sonar.projectKey', 'cryoport_skytrax-lamb-user-manager'
+        property "sonar.java.coveragePlugin", "jacoco"
+        property "sonar.jacoco.reportPaths", "build/reports/jacoco/test/jacocoTestReport.xml"
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+test.finalizedBy jacocoTestReport
+
+tasks.named('sonarqube').configure {
+    dependsOn test
 }
 
 
