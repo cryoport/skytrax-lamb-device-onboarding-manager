@@ -1,0 +1,5 @@
+
+rootProject.name="skytrax-lamb-device-onboarding-manager"
+
+include("app")
+include("infra")

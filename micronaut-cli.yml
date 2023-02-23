@@ -1,0 +1,6 @@
+applicationType: function
+defaultPackage: com.cryoport.skytrax
+testFramework: junit
+sourceLanguage: java
+buildTool: gradle
+features: [annotation-api, app-name, aws-cdk, aws-lambda, aws-lambda-custom-runtime, aws-parameter-store, aws-v2-sdk, data, data-mongodb, gradle, http-client, jackson-databind, java, junit, logback, micronaut-build, mongo-sync, readme, shade, test-resources, testcontainers, x86, yaml]
