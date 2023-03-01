@@ -1,18 +1,34 @@
 package com.cryoport.skytrax;
-import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
-import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
+
+import com.cryoport.skytrax.dto.RequestDTO;
+import com.cryoport.skytrax.dto.ResponseDTO;
+import com.cryoport.skytrax.entity.DeviceEntity;
+import com.cryoport.skytrax.repository.DeviceRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.micronaut.core.io.ResourceResolver;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.io.IOException;
+
+import static org.junit.Assert.*;
 
 
 @MicronautTest
 class FunctionRequestHandlerTest extends BaseMongoDataTest{
 
     private static FunctionRequestHandler handler;
+
+    @Inject
+    ResourceResolver resourceResolver;
+    @Inject
+    ObjectMapper mapper;
+    @Inject
+    DeviceRepository repository;
+
 
     @BeforeAll
     void setupServer() {
@@ -27,12 +43,36 @@ class FunctionRequestHandlerTest extends BaseMongoDataTest{
     }
 
     @Test
-    void testHandler() {
-        APIGatewayProxyRequestEvent request = new APIGatewayProxyRequestEvent();
-        request.setHttpMethod("GET");
-        request.setPath("/");
-        APIGatewayProxyResponseEvent response = handler.execute(request);
-        assertEquals(200, response.getStatusCode().intValue());
-        assertEquals("{\"message\":\"Hello World\"}", response.getBody());
+    void testHandler() throws IOException {
+        setDevice();
+        RequestDTO requestDTO =  mapper.readValue(resourceResolver.getResource("classpath:events/event.json").get(),
+                RequestDTO.class);
+        ResponseDTO response = handler.execute(requestDTO);
+        assertNotNull(response);
+        assertTrue(response.allowProvisioning());
+    }
+
+    @Test
+    void testHandlerNoDevice() throws IOException {
+        RequestDTO requestDTO =  mapper.readValue(resourceResolver.getResource("classpath:events/event.json").get(),
+                RequestDTO.class);
+        ResponseDTO response = handler.execute(requestDTO);
+        assertNotNull(response);
+        assertFalse(response.allowProvisioning());
+    }
+
+    @Test
+    void testHandlerInvalidRequest() throws IOException {
+        RequestDTO requestDTO =  mapper.readValue(resourceResolver.getResource("classpath:events/event-invalid.json").get(),
+                RequestDTO.class);
+        ResponseDTO response = handler.execute(requestDTO);
+        assertNull(response);
+    }
+
+
+    private void setDevice(){
+        DeviceEntity data = new DeviceEntity();
+        data.setDeviceId("8627710409503810");
+        DeviceEntity saved = repository.save(data);
     }
 }
